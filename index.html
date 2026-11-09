@@ -162,6 +162,9 @@ ul.log time{font-variant-numeric:tabular-nums;font-size:.75rem;color:var(--berry
    Урьд нь `firstChild` буцаадаг байсан тул хажуугийн тал чимээгүй алга болж,
    тамга дарах үед `stamp` олдохгүй унадаг байв. */
 const $ = (h) => { const t = document.createElement('template'); t.innerHTML = h.trim(); return t.content; };
+/* Линк болон ntfy-ээс ирсэн бичвэрийг HTML-д оруулахаас өмнө ЗААВАЛ цэвэрлэнэ —
+   эс бөгөөс хуурамч линкээр хортой код ажиллана. */
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const el = (id) => document.getElementById(id);
 const card = el('card');
 const pad = (n) => String(n).padStart(2, '0');
@@ -228,8 +231,8 @@ function showPast(){
   for (const x of a){
     const li = document.createElement('li');
     const who = x.to ? x.to : '(нэргүй)';
-    li.innerHTML = '<span>' + who + ' · ' + fmtDate(x.when) + ' ' + fmtTime(x.when) +
-      ' <span style="opacity:.55">№ ' + String(x.t).slice(-4).toUpperCase() + '</span></span>';
+    li.innerHTML = '<span>' + esc(who) + ' · ' + fmtDate(x.when) + ' ' + fmtTime(x.when) +
+      ' <span style="opacity:.55">№ ' + esc(String(x.t).slice(-4).toUpperCase()) + '</span></span>';
     const b = document.createElement('button');
     b.className = 'lnk'; b.type = 'button'; b.textContent = 'Хариу →';
     b.addEventListener('click', () => { location.hash = 'w=' + x.t; location.reload(); });
@@ -334,7 +337,7 @@ function viewCreate(){
     box.appendChild($(`
       <div style="display:flex;flex-direction:column;gap:.7rem;margin-top:.4rem">
         <p class="eyebrow">Урилгын линк — үүнийг явуул</p>
-        <p class="out" id="lnk">${invite}</p>
+        <p class="out" id="lnk">${esc(invite)}</p>
         <div class="row">
           <button class="pri" id="cp">Линкийг хуулах</button>
           <button class="gho" id="pv">Урилгыг үзэх</button>
@@ -357,27 +360,27 @@ function viewInvite(cfg){
   const when = cfg.when;
   /* Солигддог бичгүүд. Хоосон эсвэл хуучин линк дээр байхгүй бол киногийн
      анхдагч руу унана — өмнө явуулсан урилгууд хэвээр ажиллана. */
-  const kind   = cfg.kind   || 'Кино үзэх урилга';
-  const head   = cfg.head   || 'хамтдаа кино үзэх үү?';
-  const wlabel = cfg.wlabel || 'Кино';
+  const kind   = esc(cfg.kind   || 'Кино үзэх урилга');
+  const head   = esc(cfg.head   || 'хамтдаа кино үзэх үү?');
+  const wlabel = esc(cfg.wlabel || 'Кино');
   const mapUrl = /^https?:\/\//i.test(cfg.place) ? cfg.place : null;
   const placeHtml = mapUrl
-    ? `<a href="${cfg.place}" target="_blank" rel="noopener">Газрын зураг дээр нээх ↗</a>`
-    : (cfg.place || 'Нууц');
+    ? `<a href="${esc(cfg.place)}" target="_blank" rel="noopener">Газрын зураг дээр нээх ↗</a>`
+    : esc(cfg.place || 'Нууц');
   const placeSub = mapUrl ? 'Дарж нээ' : (cfg.place ? '' : 'Замдаа хэлье');
 
   card.classList.add('ticket');
   card.appendChild($(`
     <div class="pad">
       ${bulbs()}
-      <p class="eyebrow">${kind} · ${cfg.seats || 2} суудал</p>
-      <h1>${cfg.to ? cfg.to + ', ' + head : cap(head)}</h1>
-      <p class="note">${cfg.note || ''}</p>
+      <p class="eyebrow">${kind} · ${esc(cfg.seats || 2)} суудал</p>
+      <h1>${cfg.to ? esc(cfg.to) + ', ' + head : cap(head)}</h1>
+      <p class="note">${esc(cfg.note || '')}</p>
 
       <div class="grid">
         <div class="det"><dt>Хэзээ</dt><dd>${fmtDate(when)}</dd><small>${fmtDay(when)}</small></div>
         <div class="det"><dt>Цаг</dt><dd>${fmtTime(when)}</dd><small>Болзсон цаг</small></div>
-        <div class="det"><dt>${wlabel}</dt><dd>${cfg.movie || 'Чиний сонголт'}</dd></div>
+        <div class="det"><dt>${wlabel}</dt><dd>${esc(cfg.movie || 'Чиний сонголт')}</dd></div>
         <div class="det"><dt>Хаана</dt><dd>${placeHtml}</dd><small>${placeSub}</small></div>
       </div>
 
@@ -405,10 +408,10 @@ function viewInvite(cfg){
     <aside class="stub">
       <span style="font-size:1.5rem">🎟️</span>
       <span class="lbl">Нэг удаа хүчинтэй</span>
-      <span class="lbl">Суудал</span><span class="val">${cfg.seats || 2}</span>
-      ${cfg.from ? '<span class="lbl">Хэнээс</span><span class="val">' + cfg.from + '</span>' : ''}
+      <span class="lbl">Суудал</span><span class="val">${esc(cfg.seats || 2)}</span>
+      ${cfg.from ? '<span class="lbl">Хэнээс</span><span class="val">' + esc(cfg.from) + '</span>' : ''}
       <div class="bar" aria-hidden="true"></div>
-      <span class="lbl" style="letter-spacing:.1em">№ ${(cfg.t || '').slice(-4).toUpperCase()}</span>
+      <span class="lbl" style="letter-spacing:.1em">№ ${esc((cfg.t || '').slice(-4).toUpperCase())}</span>
       <span class="stamp" id="stamp">Баталгаажлаа</span>
     </aside>`));
 
@@ -527,7 +530,7 @@ function viewWatch(topic){
         <button class="gho" id="nw">Шинэ урилга</button>
       </div>
       <p class="hintline">30 секунд тутам өөрөө шинэчилнэ. Мэдэгдлийг утсандаа шууд авах бол
-        ntfy аппад <b>${topic}</b> сэдвийг бүртгүүлээрэй.</p>
+        ntfy аппад <b>${esc(topic)}</b> сэдвийг бүртгүүлээрэй.</p>
     </div>`));
 
   async function load(){
@@ -554,7 +557,7 @@ function viewWatch(topic){
       el('log').innerHTML = '';
       for (const m of msgs){
         const d = new Date(m.time * 1000);
-        el('log').appendChild($('<li><span>' + (m.message || '') + '</span><time>' +
+        el('log').appendChild($('<li><span>' + esc(m.message || '') + '</span><time>' +
           (d.getMonth()+1) + '/' + d.getDate() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + '</time></li>'));
       }
       const last = new Date(msgs[0].time * 1000);
