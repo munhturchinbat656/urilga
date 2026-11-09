@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#FFEAF1">
+<title>Урилга</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yeseva+One&family=Nunito:wght@400;600;700;800&family=Caveat:wght@500;600&display=swap">
+
+<style>
+/* Нэг ертөнцөд зориуд тууштай: ягаан цаасан тасалбар. Бүх өнгө шууд бичигдсэн. */
+:root{
+  color-scheme:light;
+  --bg:#FFEAF1; --bg-2:#FFDCE8; --paper:#FFF7FA; --stub:#FFE3EE;
+  --pink:#FF7FA9; --pink-d:#D2306A; --berry:#5E2038; --berry-2:#98566F;
+  --butter:#FFC85C; --line:rgba(210,48,106,.22); --ok:#2E7D57;
+  --display:'Yeseva One',Georgia,serif;
+  --sans:'Nunito','Segoe UI',system-ui,sans-serif;
+  --hand:'Caveat','Segoe Script',cursive;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;
+  background:
+    radial-gradient(80% 55% at 50% 0%,#FFF3F7 0%,rgba(255,243,247,0) 62%),
+    radial-gradient(70% 50% at 12% 100%,#FFD1E2 0%,rgba(255,209,226,0) 60%),
+    linear-gradient(180deg,var(--bg) 0%,var(--bg-2) 100%);
+  background-color:var(--bg);color:var(--berry);font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+}
+#confetti{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.wrap{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;
+  justify-content:center;padding:clamp(1rem,4vw,3rem) clamp(.7rem,3vw,2rem)}
+.card{width:100%;max-width:42rem;background:var(--paper);border-radius:22px;
+  box-shadow:0 26px 60px -26px rgba(120,26,64,.45),0 3px 0 rgba(255,255,255,.9) inset;
+  overflow:hidden}
+.pad{padding:clamp(1.5rem,4.5vw,2.4rem) clamp(1.15rem,4vw,2.3rem) clamp(1.5rem,4vw,2rem);
+  display:flex;flex-direction:column;gap:clamp(1rem,3vw,1.35rem)}
+
+.bulbs{display:flex;justify-content:space-between;gap:.35rem}
+.bulbs i{width:9px;height:9px;border-radius:50%;background:var(--butter);
+  box-shadow:0 0 9px 1px rgba(255,200,92,.85);animation:blink 2.4s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.28}}
+
+.eyebrow{margin:0;font-size:.66rem;font-weight:800;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--pink-d)}
+h1{margin:0;font-family:var(--display);font-weight:400;
+  font-size:clamp(1.75rem,6.4vw,2.7rem);line-height:1.14;color:var(--berry);text-wrap:balance}
+h1 em{font-style:normal;color:var(--pink-d)}
+.note{margin:0;font-family:var(--hand);font-size:1.26rem;font-weight:600;
+  color:var(--pink-d);transform:rotate(-1.2deg)}
+.sub{margin:0;font-size:.9rem;line-height:1.55;color:var(--berry-2)}
+
+/* ── Талбарууд ── */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.7rem}
+@media (max-width:26rem){.grid{grid-template-columns:1fr}}
+label{display:block}
+.lbl{font-size:.6rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--pink-d);margin-bottom:.3rem;display:block}
+input,textarea,select{
+  width:100%;font-family:var(--sans);font-size:.95rem;color:var(--berry);
+  background:#FFEFF5;border:1.5px solid rgba(255,127,169,.4);border-radius:12px;
+  padding:.6rem .7rem;
+}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--pink);outline-offset:1px}
+textarea{resize:vertical;min-height:3.2rem;font-family:var(--hand);font-size:1.1rem}
+.hintline{margin:.25rem 0 0;font-size:.68rem;color:var(--berry-2)}
+
+/* ── Товч ── */
+.row{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+button{font-family:var(--sans);font-size:.85rem;font-weight:800;letter-spacing:.03em;
+  padding:.78rem 1.5rem;border-radius:999px;cursor:pointer;border:none;
+  transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .22s ease,color .22s ease}
+.pri{background:var(--pink-d);color:#FFF7FA;box-shadow:0 8px 18px -8px rgba(210,48,106,.8)}
+.pri:hover{transform:translateY(-2px) scale(1.02)}
+.gho{background:transparent;color:var(--berry-2);border:1.5px solid rgba(210,48,106,.28)}
+.gho:hover{color:var(--pink-d);border-color:var(--pink-d)}
+.lnk{background:none;border:none;padding:.1rem 0;font-size:.8rem;font-weight:700;
+  color:var(--pink-d);text-decoration:underline}
+button:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
+[hidden]{display:none!important}
+
+/* ── Дэлгэрэнгүй ── */
+.det{background:#FFEFF5;border:1.5px solid rgba(255,127,169,.35);border-radius:14px;
+  padding:.75rem .85rem .8rem;display:flex;flex-direction:column;gap:.16rem}
+.det dt{font-size:.58rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--pink-d)}
+.det dd{margin:0;font-family:var(--display);font-size:1.05rem;line-height:1.3;color:var(--berry);word-break:break-word}
+.det small{font-family:var(--hand);font-size:1rem;color:var(--berry-2)}
+.det a{color:var(--pink-d)}
+
+/* ── Тоолуур ── */
+.clock{display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem}
+.unit{background:#FFE3EC;border-radius:12px;padding:.5rem .2rem .45rem;text-align:center}
+.unit b{display:block;font-size:clamp(1.2rem,4.2vw,1.55rem);font-weight:800;
+  font-variant-numeric:tabular-nums;line-height:1;color:var(--pink-d)}
+.unit span{font-size:.54rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--berry-2)}
+
+/* ── Тасалбарын хажуу ── */
+.ticket{display:grid;grid-template-columns:1fr 9.5rem}
+@media (max-width:36rem){.ticket{grid-template-columns:1fr}}
+.stub{position:relative;background:var(--stub);border-left:2px dashed var(--line);
+  padding:1.6rem 1rem;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:.5rem;text-align:center}
+@media (max-width:36rem){.stub{border-left:none;border-top:2px dashed var(--line);
+  flex-direction:row;flex-wrap:wrap;gap:.5rem 1.1rem;padding:1.15rem 1rem}}
+.stub .lbl{margin:0;color:var(--berry-2)}
+.stub .val{font-family:var(--display);font-size:1rem;color:var(--berry)}
+.bar{width:100%;height:34px;opacity:.72;background:repeating-linear-gradient(90deg,
+  var(--berry) 0 2px,transparent 2px 5px,var(--berry) 5px 6px,transparent 6px 10px,
+  var(--berry) 10px 13px,transparent 13px 15px)}
+.stamp{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-16deg) scale(2.4);
+  opacity:0;pointer-events:none;padding:.5rem .8rem;border:3px double var(--pink-d);
+  border-radius:8px;color:var(--pink-d);font-size:.7rem;font-weight:800;letter-spacing:.14em;
+  background:rgba(255,247,250,.55);white-space:nowrap}
+.stamp.on{animation:stamp .55s cubic-bezier(.2,1.5,.4,1) forwards}
+@keyframes stamp{0%{opacity:0;transform:translate(-50%,-50%) rotate(-30deg) scale(2.4)}
+  70%{opacity:1;transform:translate(-50%,-50%) rotate(-13deg) scale(.92)}
+  100%{opacity:1;transform:translate(-50%,-50%) rotate(-16deg) scale(1)}}
+
+/* ── Хариултууд ── */
+.big{display:flex;flex-direction:column;gap:.2rem;align-items:center;
+  background:#FFEFF5;border-radius:16px;padding:1.1rem}
+.big b{font-family:var(--display);font-size:clamp(1.3rem,5vw,1.8rem);color:var(--berry)}
+.big span{font-size:.62rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--berry-2)}
+.big.yes{background:#E6F4EC}
+.big.yes b{color:var(--ok)}
+ul.log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.4rem}
+ul.log li{background:#FFEFF5;border-radius:12px;padding:.6rem .75rem;font-size:.88rem;
+  display:flex;justify-content:space-between;gap:.6rem;align-items:baseline}
+ul.log time{font-variant-numeric:tabular-nums;font-size:.75rem;color:var(--berry-2);white-space:nowrap}
+.out{font-size:.72rem;color:var(--berry-2);word-break:break-all;user-select:all;
+  background:#FFEFF5;border:1.5px dashed rgba(210,48,106,.35);border-radius:12px;padding:.6rem .7rem}
+.reply{margin:0;font-family:var(--hand);font-size:1.28rem;font-weight:600;color:var(--pink-d)}
+.rise{opacity:0;transform:translateY(12px);animation:rise .8s cubic-bezier(.22,1,.36,1) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}
+  .rise{opacity:1;transform:none}.stamp.on{opacity:1;transform:translate(-50%,-50%) rotate(-16deg) scale(1)}}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap"><main class="card rise" id="card"></main></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   Гурван дэлгэц, нэг файл. Аль нь нээгдэхийг ХАЯГИЙН # хэсэг шийднэ:
+
+     (хоосон)      → ҮҮСГЭХ    — өгсөн хүн хаяг, цаг, киногоо бичнэ
+     #i=<өгөгдөл>  → УРИЛГА    — хүлээн авагч харна
+     #w=<сэдэв>    → ХАРИУЛТ   — өгсөн хүн хариу ирэхийг хардаг
+
+   Сервер БАЙХГҮЙ. Урилгын тохиргоо линк дотроо base64-ээр яваад,
+   хариулт нь ntfy.sh реле дээр тавигдана. Тиймээс энэ файлыг хаана ч
+   тавьж болно — бүртгэл, өгөгдлийн сан шаардахгүй.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Хэсэг бүтээх туслах. ХЭСЭГ (fragment) буцаана — нэг загварт олон элемент
+   байвал (жишээ нь тасалбарын их бие + хажуугийн тал) бүгдийг нь авчирна.
+   Урьд нь `firstChild` буцаадаг байсан тул хажуугийн тал чимээгүй алга болж,
+   тамга дарах үед `stamp` олдохгүй унадаг байв. */
+const $ = (h) => { const t = document.createElement('template'); t.innerHTML = h.trim(); return t.content; };
+const el = (id) => document.getElementById(id);
+const card = el('card');
+const pad = (n) => String(n).padStart(2, '0');
+const DAYS = ['Ням','Даваа','Мягмар','Лхагва','Пүрэв','Баасан','Бямба'];
+
+/* ── Линкэнд өгөгдөл шифрлэх (UTF-8 аюулгүй base64url) ── */
+function enc(obj){
+  const b = new TextEncoder().encode(JSON.stringify(obj));
+  let s = ''; for (const x of b) s += String.fromCharCode(x);
+  return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function dec(str){
+  const s = atob(str.replace(/-/g,'+').replace(/_/g,'/'));
+  const b = Uint8Array.from(s, (c) => c.charCodeAt(0));
+  return JSON.parse(new TextDecoder().decode(b));
+}
+/* Таамаглашгүй сэдэв — хариулт хэн нэгэнд харагдахгүйн тулд урт байх ёстой */
+function newTopic(){
+  const a = new Uint8Array(9); crypto.getRandomValues(a);
+  return 'kino-' + [...a].map((x) => x.toString(16).padStart(2,'0')).join('');
+}
+const bulbs = () => '<div class="bulbs" aria-hidden="true">' + '<i></i>'.repeat(14) + '</div>';
+/* Нэр байхгүй үед гарчиг жижиг үсгээр эхлэхээс сэргийлнэ
+   («Сараа, хамтдаа…» ба «Хамтдаа…» хоёр хоёулаа зөв харагдана). */
+const cap = (s) => (s || '').charAt(0).toUpperCase() + (s || '').slice(1);
+
+/* ── Огноо, цагийг эвтэйхэн бичих ── */
+function fmtDate(iso){
+  const d = new Date(iso); if (isNaN(d)) return '—';
+  const now = new Date();
+  const same = (a,b) => a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+  const tmr = new Date(now.getTime() + 86400000);
+  if (same(d, now)) return 'Өнөөдөр';
+  if (same(d, tmr)) return 'Маргааш';
+  return (d.getMonth()+1) + '-р сарын ' + d.getDate();
+}
+const fmtDay  = (iso) => { const d = new Date(iso); return isNaN(d) ? '' : DAYS[d.getDay()] + ' гараг'; };
+const fmtTime = (iso) => { const d = new Date(iso); return isNaN(d) ? '—' : pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+
+/* ── Үүсгэсэн урилгуудыг ЭНЭ хөтөч дээр санана ──
+   Сэдэв нь зөвхөн линк дотор явдаг тул линкээ алдвал хариугаа хэзээ ч
+   харах аргагүй болдог байв. Одоо үүсгэсэн бүрийг нь энд бичиж, үүсгэх
+   дэлгэц дээр жагсаана. (Зөвхөн энэ төхөөрөмж дээр — өөр утаснаас
+   харагдахгүй, тиймээс чухал урилгынхаа линкийг хадгалсан нь дээр.) */
+const HIST = 'kino-invites';
+function history_(){
+  try { const a = JSON.parse(localStorage.getItem(HIST) || '[]'); return Array.isArray(a) ? a : []; }
+  catch(e){ return []; }
+}
+function remember(cfg){
+  try {
+    const a = history_().filter((x) => x.t !== cfg.t);
+    a.unshift({ t: cfg.t, to: cfg.to || '', when: cfg.when, at: Date.now() });
+    localStorage.setItem(HIST, JSON.stringify(a.slice(0, 10)));   // сүүлийн 10
+  } catch(e){}
+}
+function showPast(){
+  const box = el('past'); if (!box) return;
+  const a = history_();
+  if (!a.length) { box.hidden = true; return; }
+  box.hidden = false;
+  box.innerHTML = '<p class="lbl" style="margin-top:.4rem">Энэ төхөөрөмж дээр үүсгэсэн урилгууд</p>';
+  const ul = document.createElement('ul'); ul.className = 'log';
+  for (const x of a){
+    const li = document.createElement('li');
+    const who = x.to ? x.to : '(нэргүй)';
+    li.innerHTML = '<span>' + who + ' · ' + fmtDate(x.when) + ' ' + fmtTime(x.when) +
+      ' <span style="opacity:.55">№ ' + String(x.t).slice(-4).toUpperCase() + '</span></span>';
+    const b = document.createElement('button');
+    b.className = 'lnk'; b.type = 'button'; b.textContent = 'Хариу →';
+    b.addEventListener('click', () => { location.hash = 'w=' + x.t; location.reload(); });
+    li.appendChild(b); ul.appendChild(li);
+  }
+  box.appendChild(ul);
+}
+
+/* ═══════════ 1. ҮҮСГЭХ ═══════════ */
+function viewCreate(){
+  const now = new Date(Date.now() + 86400000);
+  const dISO = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate());
+  card.appendChild($(`
+    <div class="pad">
+      ${bulbs()}
+      <p class="eyebrow">Урилга үүсгэх</p>
+      <h1>Урилга <em>бэлдье</em></h1>
+      <p class="sub">Доорх талбарыг бөглөхөд урилгын линк гарна. Тэр линкийг явуулахад хүлээн
+        авагч тасалбар хэлбэрээр харна. Хариулахад нь та шууд мэдэх болно.</p>
+
+      <div class="grid">
+        <label><span class="lbl">Хэнд</span><input id="f_to" placeholder="Нэр (заавал бус)"></label>
+        <label><span class="lbl">Хэнээс</span><input id="f_from" placeholder="Таны нэр (заавал бус)"></label>
+        <label><span class="lbl">Огноо</span><input id="f_date" type="date" value="${dISO}"></label>
+        <label><span class="lbl">Цаг</span><input id="f_time" type="time" value="19:00"></label>
+      </div>
+
+      <label><span class="lbl">Хаяг / байршил</span>
+        <input id="f_place" placeholder="Жишээ: Хүннү молл, 4 давхар">
+        <p class="hintline">Google Maps-ийн холбоос тавьж болно — товч болж харагдана.</p>
+      </label>
+
+      <div class="grid">
+        <label><span class="lbl">Урилгын төрөл</span>
+          <input id="f_kind" placeholder="Кино үзэх урилга"></label>
+        <label><span class="lbl">Гарчиг</span>
+          <input id="f_head" placeholder="хамтдаа кино үзэх үү?"></label>
+      </div>
+
+      <div class="grid">
+        <label><span class="lbl">Мөрийн нэр</span><input id="f_wlabel" placeholder="Кино"></label>
+        <label><span class="lbl">Мөрийн утга</span><input id="f_movie" placeholder="Чиний сонголт"></label>
+      </div>
+
+      <div class="grid">
+        <label><span class="lbl">Хэдэн суудал</span><input id="f_seats" type="number" min="1" max="9" value="2"></label>
+      </div>
+
+      <label><span class="lbl">Тэмдэглэл</span>
+        <textarea id="f_note" placeholder="Попкорныг би авна, чи зөвхөн ирээрэй ✿"></textarea>
+      </label>
+
+      <div class="row">
+        <button class="pri" id="mk">Урилга үүсгэх →</button>
+      </div>
+      <div id="warn" hidden></div>
+      <div id="made" hidden></div>
+      <div id="past" hidden></div>
+    </div>`));
+
+  /* Файлыг компьютер дээрээсээ шууд нээвэл үүсэх линк `file:///C:/…` болно —
+     тэр нь зөвхөн энэ компьютер дээр ажиллана, утсанд нээгдэхгүй. Чимээгүй
+     өнгөрвөл хүн уг линкийг явуулаад «нээгдэхгүй байна» гэж гайхна. */
+  if (location.protocol === 'file:'){
+    const w = el('warn'); w.hidden = false;
+    w.innerHTML = '<div style="background:#FFF1DC;border:1.5px solid #E8B96B;border-radius:12px;' +
+      'padding:.7rem .85rem;font-size:.82rem;line-height:1.5;color:#6B4A17">' +
+      '<b>Анхаар.</b> Энэ хуудсыг компьютерийнхаа файлаас нээж байна. Үүсэх линк ' +
+      '<code>file:///C:/…</code> гэж эхлэх бөгөөд <b>өөр хүний утсанд нээгдэхгүй</b>. ' +
+      'Урилга явуулах бол энэ файлыг эхлээд интернэтэд байрлуулаарай.</div>';
+  }
+
+  showPast();   // өмнө үүсгэсэн байвал шууд жагсаана
+
+  el('mk').addEventListener('click', () => {
+    const date = el('f_date').value, time = el('f_time').value || '19:00';
+    if (!date) { alert('Огноогоо сонгоно уу'); return; }
+    const cfg = {
+      to: el('f_to').value.trim(), from: el('f_from').value.trim(),
+      when: date + 'T' + time,
+      place: el('f_place').value.trim(),
+      // Урилгын төрөл, гарчиг, мөрийн нэр — бүгд солигдоно. Хоосон бол киногийн
+      // анхдагч. Хуучин линкүүдэд эдгээр талбар БАЙХГҮЙ тул уншихдаа ч анхдагч
+      // руу унана — өмнө явуулсан урилгууд эвдрэхгүй.
+      kind: el('f_kind').value.trim(),
+      head: el('f_head').value.trim(),
+      wlabel: el('f_wlabel').value.trim(),
+      movie: el('f_movie').value.trim() || 'Чиний сонголт',
+      seats: Math.max(1, Math.min(9, Number(el('f_seats').value) || 2)),
+      note: el('f_note').value.trim() || 'Попкорныг би авна, чи зөвхөн ирээрэй ✿',
+      t: newTopic(),
+    };
+    const base = location.href.split('#')[0];
+    const invite = base + '#i=' + enc(cfg);
+    const watch  = base + '#w=' + cfg.t;
+    remember(cfg);
+    showPast();
+
+    const box = el('made');
+    box.hidden = false;
+    box.innerHTML = '';
+    box.appendChild($(`
+      <div style="display:flex;flex-direction:column;gap:.7rem;margin-top:.4rem">
+        <p class="eyebrow">Урилгын линк — үүнийг явуул</p>
+        <p class="out" id="lnk">${invite}</p>
+        <div class="row">
+          <button class="pri" id="cp">Линкийг хуулах</button>
+          <button class="gho" id="pv">Урилгыг үзэх</button>
+          <button class="gho" id="wt">Хариу харах →</button>
+        </div>
+        <p class="hintline">«Хариу харах» хуудсыг хавчуургадаж ав — хариу ирэхэд тэндээс харна.</p>
+      </div>`));
+    el('cp').addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(invite); el('cp').textContent = 'Хуулагдлаа ✓'; }
+      catch(e){ const r = document.createRange(); r.selectNodeContents(el('lnk'));
+        const s = getSelection(); s.removeAllRanges(); s.addRange(r); el('cp').textContent = 'Тэмдэглэлээ — хуулж ав'; }
+    });
+    el('pv').addEventListener('click', () => { location.hash = 'i=' + enc(cfg); location.reload(); });
+    el('wt').addEventListener('click', () => { location.hash = 'w=' + cfg.t; location.reload(); });
+  });
+}
+
+/* ═══════════ 2. УРИЛГА (хүлээн авагч) ═══════════ */
+function viewInvite(cfg){
+  const when = cfg.when;
+  /* Солигддог бичгүүд. Хоосон эсвэл хуучин линк дээр байхгүй бол киногийн
+     анхдагч руу унана — өмнө явуулсан урилгууд хэвээр ажиллана. */
+  const kind   = cfg.kind   || 'Кино үзэх урилга';
+  const head   = cfg.head   || 'хамтдаа кино үзэх үү?';
+  const wlabel = cfg.wlabel || 'Кино';
+  const mapUrl = /^https?:\/\//i.test(cfg.place) ? cfg.place : null;
+  const placeHtml = mapUrl
+    ? `<a href="${cfg.place}" target="_blank" rel="noopener">Газрын зураг дээр нээх ↗</a>`
+    : (cfg.place || 'Нууц');
+  const placeSub = mapUrl ? 'Дарж нээ' : (cfg.place ? '' : 'Замдаа хэлье');
+
+  card.classList.add('ticket');
+  card.appendChild($(`
+    <div class="pad">
+      ${bulbs()}
+      <p class="eyebrow">${kind} · ${cfg.seats || 2} суудал</p>
+      <h1>${cfg.to ? cfg.to + ', ' + head : cap(head)}</h1>
+      <p class="note">${cfg.note || ''}</p>
+
+      <div class="grid">
+        <div class="det"><dt>Хэзээ</dt><dd>${fmtDate(when)}</dd><small>${fmtDay(when)}</small></div>
+        <div class="det"><dt>Цаг</dt><dd>${fmtTime(when)}</dd><small>Болзсон цаг</small></div>
+        <div class="det"><dt>${wlabel}</dt><dd>${cfg.movie || 'Чиний сонголт'}</dd></div>
+        <div class="det"><dt>Хаана</dt><dd>${placeHtml}</dd><small>${placeSub}</small></div>
+      </div>
+
+      <div>
+        <p class="lbl" id="cl">Эхлэхэд үлдсэн</p>
+        <div class="clock" id="clock">
+          <div class="unit"><b id="cD">—</b><span>Хоног</span></div>
+          <div class="unit"><b id="cH">—</b><span>Цаг</span></div>
+          <div class="unit"><b id="cM">—</b><span>Мин</span></div>
+          <div class="unit"><b id="cS">—</b><span>Сек</span></div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:.8rem">
+        <p style="margin:0;font-family:var(--display);font-size:1.25rem">За гэж хэлэх үү?</p>
+        <div class="row" id="btns">
+          <button class="pri" id="yes">Тийм ээ 💗</button>
+          <button class="gho" id="no">Бодоод үзье</button>
+        </div>
+        <p class="reply" id="reply"></p>
+        <p class="hintline" id="hint"></p>
+        <button class="lnk" id="retry" hidden>↻ Дахин илгээх</button>
+      </div>
+    </div>
+    <aside class="stub">
+      <span style="font-size:1.5rem">🎟️</span>
+      <span class="lbl">Нэг удаа хүчинтэй</span>
+      <span class="lbl">Суудал</span><span class="val">${cfg.seats || 2}</span>
+      ${cfg.from ? '<span class="lbl">Хэнээс</span><span class="val">' + cfg.from + '</span>' : ''}
+      <div class="bar" aria-hidden="true"></div>
+      <span class="lbl" style="letter-spacing:.1em">№ ${(cfg.t || '').slice(-4).toUpperCase()}</span>
+      <span class="stamp" id="stamp">Баталгаажлаа</span>
+    </aside>`));
+
+  /* Тоолуур */
+  const T = new Date(when).getTime();
+  const tick = () => {
+    const ms = T - Date.now();
+    if (!(ms > 0)) { el('cl').textContent = 'Болзсон цаг болсон';
+      el('clock').innerHTML = '<div class="unit" style="grid-column:1/-1"><b>Одоо</b><span>Уулзана</span></div>';
+      clearInterval(iv); return; }
+    const s = Math.floor(ms/1000);
+    el('cD').textContent = Math.floor(s/86400);
+    el('cH').textContent = pad(Math.floor(s/3600)%24);
+    el('cM').textContent = pad(Math.floor(s/60)%60);
+    el('cS').textContent = pad(s%60);
+  };
+  tick(); const iv = setInterval(tick, 1000);
+
+  /* Нэг удаагийн байдал — тухайн төхөөрөмж дээр */
+  const LS = 'kino-' + (cfg.t || 'x');
+  let saved = null; try { saved = JSON.parse(localStorage.getItem(LS) || 'null'); } catch(e){}
+  let lastAt = saved && saved.at || null;
+
+  function seal(at, fresh, sent){
+    el('stamp').classList.add('on');
+    const b = el('btns'); if (b) b.remove();
+    // Тодорхой үйл явдалд уяахгүй — урилга нь кино байх албагүй болсон
+    el('reply').textContent = 'Тэгвэл ' + fmtDate(when).toLowerCase() + ', ' + fmtTime(when) +
+      ' цагт. Би чамайг хүлээж байя.';
+    if (fresh)      el('hint').textContent = 'Хариултыг чинь хүргэж байна…';
+    else if (sent)  el('hint').textContent = 'Хариултыг чинь хүргэсэн 💗' + (at ? ' · ' + at : '');
+    else            showRetry('Хариулт хүрээгүй байна.');
+    if (fresh) burst();
+  }
+  function showRetry(m){ el('hint').textContent = m + ' Дахин оролдоод үзээрэй.'; el('retry').hidden = false; }
+  function remember(at, sent){ try { localStorage.setItem(LS, JSON.stringify({used:true, at, sent})); } catch(e){} }
+
+  function ping(at){
+    if (!cfg.t) { el('hint').textContent = ''; return; }
+    el('retry').hidden = true;
+    const body = 'Зөвшөөрлөө 🎟 ' + (cfg.to ? cfg.to + ' · ' : '') + at +
+                 ' · ' + fmtDate(when) + ' ' + fmtTime(when) + (cfg.place ? ' · ' + cfg.place : '');
+    try {
+      fetch('https://ntfy.sh/' + cfg.t, { method:'POST', keepalive:true, body })
+        .then((r) => { if (!r.ok) throw new Error(r.status);
+          el('hint').textContent = 'Хариултыг чинь хүргэлээ 💗'; remember(at, true); })
+        .catch(() => showRetry('Сүлжээ салсан байна.'));
+    } catch(e){ showRetry('Сүлжээ салсан байна.'); }
+  }
+
+  if (saved && saved.used) seal(saved.at, false, !!saved.sent);
+  el('retry').addEventListener('click', () => ping(lastAt));
+  const yes = el('yes');
+  if (yes) yes.addEventListener('click', () => {
+    const d = new Date();
+    const at = (d.getMonth()+1) + '-р сарын ' + d.getDate() + ', ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+    lastAt = at; remember(at, false); seal(at, true); ping(at);
+  });
+  /* «Бодоод үзье» — зугтаж, бодох талаар янз бүрийн юм хэлж, эцэст нь
+     бүрмөсөн алга болно. Хөдөлгөөн багасгах тохиргоотой хүнд ЗУГТААХГҮЙ:
+     мессеж нь солигдоод, тоо дүүрэхэд ижил адил алга болно — шоглоом
+     үлдэж, толгой эргэх эрсдэл үгүй. */
+  /* Товчны бичиг нь ӨӨРӨӨ солигдоно — доор тайлбар гарахгүй. Богино байлгав:
+     урт бичиг товчийг сунгаж, зэргэлдээх «Тийм ээ»-г түлхэнэ. */
+  const NAGS = [
+    'Үнэхээр үү?',
+    'Хүлээж байна шүү ⏳',
+    'Чөлөөтэй шүү дээ 👀',
+    'Би ядарлаа…',
+    'За яахав',
+  ];
+  const no = el('no');
+  let dodge = 0;
+  if (no){
+    const soft = matchMedia('(prefers-reduced-motion:reduce)').matches;
+    no.style.whiteSpace = 'nowrap';
+    const nag = () => {
+      no.textContent = NAGS[Math.min(dodge, NAGS.length - 1)];
+      dodge++;
+      if (dodge >= NAGS.length){                 // дүүрэв — товч бүрмөсөн алга
+        no.style.pointerEvents = 'none';
+        no.style.transition = 'opacity .5s ease, transform .5s ease';
+        no.style.opacity = '0';
+        no.style.transform = 'translateY(-14px) scale(.7) rotate(-8deg)';
+        // Доор тайлбар БИЧИХГҮЙ — алга болсон нь өөрөө хариу. Ганц «Тийм ээ» үлдэнэ.
+        setTimeout(() => no.remove(), 520);
+        return;
+      }
+      if (!soft) no.style.transform =
+        'translate(' + ((dodge % 2 ? 1 : -1) * (44 + dodge * 14)) + 'px,' + (dodge * -6) + 'px)';
+    };
+    // Хулгана: ойртоход л зугтана. Хүрэлцэх дэлгэц: даралтаар ижил зан.
+    if (matchMedia('(hover:hover)').matches && !soft) no.addEventListener('mouseenter', nag);
+    no.addEventListener('click', nag);
+  }
+}
+
+/* ═══════════ 3. ХАРИУЛТУУД (өгсөн хүн) ═══════════ */
+function viewWatch(topic){
+  card.appendChild($(`
+    <div class="pad">
+      ${bulbs()}
+      <p class="eyebrow">Урилгын хариу</p>
+      <h1>Хариу <em>ирсэн үү?</em></h1>
+      <div class="big" id="state"><b>Шалгаж байна…</b><span>Төлөв</span></div>
+      <div class="grid">
+        <div class="det"><dt>Нийт хариу</dt><dd id="s_n">—</dd><small>ntfy дээрх бичлэг</small></div>
+        <div class="det"><dt>Хамгийн сүүлд</dt><dd id="s_t">—</dd><small id="s_ago">—</small></div>
+      </div>
+      <div>
+        <p class="lbl">Түүх</p>
+        <ul class="log" id="log"><li><span>Ачаалж байна…</span></li></ul>
+      </div>
+      <div class="row">
+        <button class="pri" id="rf">Дахин шалгах</button>
+        <button class="gho" id="nw">Шинэ урилга</button>
+      </div>
+      <p class="hintline">30 секунд тутам өөрөө шинэчилнэ. Мэдэгдлийг утсандаа шууд авах бол
+        ntfy аппад <b>${topic}</b> сэдвийг бүртгүүлээрэй.</p>
+    </div>`));
+
+  async function load(){
+    try{
+      const r = await fetch('https://ntfy.sh/' + topic + '/json?poll=1&since=all');
+      if (!r.ok) throw new Error(r.status);
+      const txt = await r.text();
+      const msgs = txt.split('\n').filter(Boolean).map((l) => { try { return JSON.parse(l); } catch(e){ return null; } })
+        .filter((m) => m && m.event === 'message')
+        .sort((a,b) => b.time - a.time);
+      render(msgs);
+    } catch(e){
+      el('state').innerHTML = '<b>Шалгаж чадсангүй</b><span>Сүлжээ</span>';
+      el('log').innerHTML = '<li><span>Сүлжээ салсан байна. «Дахин шалгах» дарна уу.</span></li>';
+    }
+  }
+  function render(msgs){
+    const st = el('state');
+    if (!msgs.length){
+      st.className = 'big'; st.innerHTML = '<b>Хараахан хариулаагүй</b><span>Хүлээгдэж байна</span>';
+      el('log').innerHTML = '<li><span>Одоогоор хариу алга.</span></li>';
+    } else {
+      st.className = 'big yes'; st.innerHTML = '<b>Зөвшөөрсөн 💗</b><span>Хариу ирсэн</span>';
+      el('log').innerHTML = '';
+      for (const m of msgs){
+        const d = new Date(m.time * 1000);
+        el('log').appendChild($('<li><span>' + (m.message || '') + '</span><time>' +
+          (d.getMonth()+1) + '/' + d.getDate() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + '</time></li>'));
+      }
+      const last = new Date(msgs[0].time * 1000);
+      el('s_t').textContent = pad(last.getHours()) + ':' + pad(last.getMinutes());
+      const mins = Math.max(0, Math.round((Date.now() - last.getTime()) / 60000));
+      el('s_ago').textContent = mins < 60 ? mins + ' минутын өмнө' : Math.round(mins/60) + ' цагийн өмнө';
+      if (msgs.length) burst();
+    }
+    el('s_n').textContent = msgs.length;
+  }
+  el('rf').addEventListener('click', load);
+  el('nw').addEventListener('click', () => { location.hash = ''; location.reload(); });
+  load(); setInterval(load, 30000);
+}
+
+/* ═══════════ Чиглүүлэгч ═══════════ */
+(function route(){
+  const h = location.hash.replace(/^#/, '');
+  try {
+    if (h.startsWith('i=')) return viewInvite(dec(h.slice(2)));
+    if (h.startsWith('w=')) return viewWatch(h.slice(2));
+  } catch(e){
+    card.appendChild($('<div class="pad"><p class="eyebrow">Алдаа</p>' +
+      '<h1>Линк гэмтсэн байна</h1><p class="sub">Урилгын холбоос бүтэн хуулагдаагүй бололтой. ' +
+      'Явуулсан хүнээсээ дахин авна уу.</p></div>'));
+    return;
+  }
+  viewCreate();
+})();
+
+/* ── Зүрх ба попкорн ── */
+let burst = () => {};
+(function float(){
+  const c = el('confetti'), x = c.getContext('2d');
+  const PINKS = ['#FF7FA9','#FFA9C4','#D2306A','#FFC0D4'];
+  const still = matchMedia('(prefers-reduced-motion:reduce)').matches;
+  let W, H, R = 1, lw = -1, lh = -1, bits = [];
+  const cw = () => c.clientWidth || document.documentElement.clientWidth || innerWidth || 1;
+  const ch = () => c.clientHeight || document.documentElement.clientHeight || innerHeight || 1;
+  function size(){
+    R = Math.min(devicePixelRatio || 1, 2); lw = cw(); lh = ch();
+    W = c.width = Math.max(1, Math.floor(lw*R)); H = c.height = Math.max(1, Math.floor(lh*R));
+    bits = Array.from({length: Math.max(10, Math.min(34, Math.round(lw*lh/34000)))}, () => spawn(Math.random()*H));
+  }
+  function spawn(y){ return { x: Math.random()*W, y, s: (Math.random()*9+7)*R, a: Math.random()*.26+.13,
+    v: (Math.random()*.16+.1)*R, sw: Math.random()*.5+.25, p: Math.random()*6.28,
+    rot: Math.random()*.5-.25, pop: Math.random() < .3, col: PINKS[(Math.random()*4)|0] }; }
+  function heart(s){ x.beginPath(); x.moveTo(0,s*.34);
+    x.bezierCurveTo(-s*.12,s*.1,-s*.55,-s*.06,-s*.5,-s*.3);
+    x.bezierCurveTo(-s*.46,-s*.52,-s*.16,-s*.52,0,-s*.24);
+    x.bezierCurveTo(s*.16,-s*.52,s*.46,-s*.52,s*.5,-s*.3);
+    x.bezierCurveTo(s*.55,-s*.06,s*.12,s*.1,0,s*.34); x.closePath(); x.fill(); }
+  function pop(s){ const r = s*.22; [[0,-r],[-r*.9,r*.2],[r*.9,r*.2],[0,r*.95]].forEach(([dx,dy]) => {
+    x.beginPath(); x.arc(dx,dy,r,0,6.284); x.fill(); }); }
+  function frame(){
+    if (cw() !== lw || ch() !== lh) size();
+    x.clearRect(0,0,W,H);
+    for (const b of bits){
+      if (!still){ b.y -= b.v; b.p += .012; if (b.y < -b.s) Object.assign(b, spawn(H + b.s)); }
+      x.save(); x.translate(b.x + Math.sin(b.p)*b.sw*14, b.y); x.rotate(Math.sin(b.p*.6)*b.rot);
+      x.globalAlpha = b.a; x.fillStyle = b.pop ? '#FFC85C' : b.col;
+      b.pop ? pop(b.s) : heart(b.s); x.restore();
+    }
+    x.globalAlpha = 1; if (!still) requestAnimationFrame(frame);
+  }
+  size(); addEventListener('resize', () => { size(); if (still) frame(); }); requestAnimationFrame(frame);
+  burst = function(){
+    if (still) return;
+    for (let i = 0; i < 22; i++){ const b = spawn(H*.62);
+      b.x = W*.5 + (Math.random()-.5)*W*.5; b.a = Math.random()*.5+.35;
+      b.v = (Math.random()*.9+.5)*R; b.s = (Math.random()*12+9)*R; bits.push(b); }
+    if (bits.length > 90) bits.splice(0, bits.length - 90);
+  };
+})();
+</script>
+</body>
+</html>
